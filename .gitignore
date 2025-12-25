@@ -1,0 +1,39 @@
+# --- Dependencies (Thư viện) ---
+node_modules/
+client/node_modules/
+
+# --- Security (BẢO MẬT - QUAN TRỌNG NHẤT) ---
+# Chặn tất cả các file môi trường chứa khóa bí mật
+.env
+.env.local
+.env.*.local
+client/.env
+client/.env.local
+
+# --- Hardhat (Backend Smart Contract) ---
+/cache
+/artifacts
+/typechain
+/typechain-types
+/coverage
+/coverage.json
+
+# Hardhat Ignition (Deployment logs cho local node)
+ignition/deployments/chain-31337
+
+# --- Vite/React (Frontend Build) ---
+dist/
+dist-ssr/
+build/
+client/dist/
+client/build/
+
+# --- Logs & System (File rác hệ thống) ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
