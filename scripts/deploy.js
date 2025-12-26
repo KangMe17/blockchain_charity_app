@@ -1,24 +1,42 @@
 import hre from "hardhat";
 
 async function main() {
-  console.log("Đang chuẩn bị deploy...");
+  const [deployer] = await hre.ethers.getSigners();
+  const provider = deployer.provider;
 
-  // 1. Lấy bản thiết kế của Contract
+  // --- 1. KIỂM TRA MẠNG (QUAN TRỌNG NHẤT) ---
+  const network = await provider.getNetwork();
+  
+  console.log("----------------------------------------------------");
+  console.log("🌍 Đang kết nối tới mạng có Chain ID:", network.chainId.toString());
+  
+  if (network.chainId.toString() === "11155111") {
+      console.log("✅ ĐÚNG LÀ MẠNG SEPOLIA!");
+  } else if (network.chainId.toString() === "1") {
+      console.log("❌ SAI RỒI! ĐÂY LÀ ETHEREUM MAINNET (Mạng thật)");
+  } else if (network.chainId.toString() === "31337") {
+      console.log("❌ SAI RỒI! ĐÂY LÀ HARDHAT LOCALHOST (Mạng ảo)");
+  } else {
+      console.log("⚠️ Mạng lạ, không phải Sepolia.");
+  }
+
+  // --- 2. KIỂM TRA VÍ ---
+  console.log("👉 Địa chỉ ví:", deployer.address);
+  const balance = await provider.getBalance(deployer.address);
+  console.log("💰 Số dư:", hre.ethers.formatEther(balance), "ETH");
+  console.log("----------------------------------------------------");
+
+  if (balance.toString() === "0") {
+    console.error("⛔ DỪNG LẠI: Ví 0 ETH thì không thể deploy.");
+    return;
+  }
+
+  // --- 3. DEPLOY ---
+  console.log("🚀 Đang deploy...");
   const CrowdFunding = await hre.ethers.getContractFactory("CrowdFunding");
-
-  // 2. Deploy lên mạng
   const crowdFunding = await CrowdFunding.deploy();
-
-  // 3. Chờ xác nhận
   await crowdFunding.waitForDeployment();
-
-  // 4. Lấy địa chỉ
-  const address = await crowdFunding.getAddress();
-
-  console.log("----------------------------------------------------");
-  console.log("🎉 CHÚC MỪNG! Contract đã deploy thành công!");
-  console.log("👉 Địa chỉ Contract: " + address);
-  console.log("----------------------------------------------------");
+  console.log("🎉 Thành công! Contract Address:", await crowdFunding.getAddress());
 }
 
 main().catch((error) => {
